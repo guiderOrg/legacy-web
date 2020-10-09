@@ -6,7 +6,7 @@ from flask_socketio import SocketIO
 from pymongo.errors import ConnectionFailure
 from pymongo import MongoClient
 from monitoring.controllers import Main, Slack, Devices, Dataset
-from monitoring.services import get_dashboard_data, stop_command_run, get_data_by_command, health_check
+from monitoring.services import getData, get_dashboard_data, stop_command_run, get_data_by_command, health_check
 is_connected = False
 
 
@@ -45,6 +45,7 @@ def create_app(config_name):
     api.add_resource(Devices, '/devices')
     api.add_resource(Slack, '/slack/')
 
+    socket.on_event('get_data', getData)
     socket.on_event('get_dashboard_data', get_dashboard_data)
     socket.on_event('get_data_by_command', get_data_by_command)
     socket.on_event('stop_command_run', stop_command_run)

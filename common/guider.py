@@ -2,7 +2,7 @@ import sys
 import os
 
 curDir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, '%s/../../guider' % curDir)
+sys.path.insert(0, '%s/../guider' % curDir)
 from guider import NetworkMgr
 
 

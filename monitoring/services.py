@@ -115,6 +115,50 @@ def parse_to_dashboard_data(data):
     return msg
 
 
+def getData():
+    import time, os
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+
+    with open(basedir + '/../static/sample.json') as json_file:
+        json_data = json.load(json_file)
+
+    for data in json_data:
+        msg = dict(timestamp=data['timestamp'],
+                   mac_addr=data['net']['repmac'])
+
+        # cpu
+        cpu = data['cpu']
+        msg['cpu'] = dict(kernel=cpu['kernel'],
+                          user=cpu['user'],
+                          irq=cpu['irq'],
+                          nrCore=cpu['nrCore'],
+                          total=cpu['total'])
+        # memory
+        memory = data['mem']
+        msg['memory'] = dict(kernel=memory['kernel'],
+                             cache=memory['cache'],
+                             free=memory['free'],
+                             anon=memory['anon'],
+                             total=memory['total'])
+        # # storage
+        storage = data['storage']['total']
+        msg['storage'] = dict(free=storage['free'],
+                              usage=storage['usage'],
+                              total=storage['total'])
+
+        # network
+        network = data['net']
+        msg['network'] = dict(
+            inbound=network['inbound'], outbound=network['outbound'])
+
+        result = dict(result=0, data=msg)
+        emit('set_dashboard_data', result)
+        print(msg)
+
+        time.sleep(3)
+
+
 def get_dashboard_data(request_id, target_addr):
     result = dict(result=-1, data=dict(), errorMsg='')
     if target_addr is None or target_addr is '':
